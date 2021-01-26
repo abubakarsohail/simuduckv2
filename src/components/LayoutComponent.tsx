@@ -44,40 +44,37 @@ const LayoutComponent = ({ layout }: LayoutComponentProps) => {
     } else {
       component = new ducks[duckIndex]();
     }
-    setComponents((components) => {
-      const _components = components.slice();
-      _components.push(component);
-      return _components;
-    });
     layout.add(component);
+    setComponents(layout.components.slice());
     setOpen(false);
   };
 
   const handleColor = (componentIndex: number, colorIndex: number) => {
-    const component: Component = components[componentIndex];
-    const decoratedComponent = new colors[colorIndex](component);
-    setComponents((components) => {
-      const _components = components.slice();
-      _components[componentIndex] = decoratedComponent;
-      layout.add(decoratedComponent);
-      return _components;
-    });
+    layout.componentIndex = componentIndex;
+    layout.colorIndex = colorIndex;
+    layout.colorCommand.execute();
+    layout.undoCommands.push(layout.colorCommand);
+    setComponents(layout.components.slice());
   };
 
   const handleLayoutColor = (colorIndex: number) => {
-    setComponents((components) => {
-      const _components = components.map(
-        (component) => new colors[colorIndex](component)
-      );
-      layout.components = components;
-      return _components;
-    });
+    layout.colorAllIndex = colorIndex;
+    layout.colorAllCommand.execute();
+    layout.undoCommands.push(layout.colorAllCommand);
+    setComponents(layout.components.slice());
+  };
+
+  const handleUndo = () => {
+    const command = layout.undoCommands.pop();
+    command?.undo();
+    setComponents(layout.components.slice());
   };
 
   return (
     <Box sx={{ margin: 1 }}>
       {/* Select layout */}
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+      <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+        <Button onClick={handleUndo}>Undo</Button>
         <TextField
           select
           value={type}
