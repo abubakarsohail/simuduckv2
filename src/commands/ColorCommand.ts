@@ -15,6 +15,10 @@ class ColorCommand implements Command {
   undo = () => {
     this.layout.removeColor();
   };
+
+  redo = () => {
+    this.layout.color();
+  };
 }
 
 export default ColorCommand;

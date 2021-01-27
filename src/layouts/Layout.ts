@@ -13,7 +13,8 @@ abstract class Layout extends Component {
   colorCommand: Command = new ColorCommand(this);
   colorAllCommand: Command = new ColorAllCommand(this);
 
-  undoCommands: Command[] = [];
+  undoCommand!: Command;
+  redoCommand!: Command;
 
   add = (component: Component) => {
     this.components.push(component);

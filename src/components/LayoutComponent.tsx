@@ -53,20 +53,28 @@ const LayoutComponent = ({ layout }: LayoutComponentProps) => {
     layout.componentIndex = componentIndex;
     layout.colorIndex = colorIndex;
     layout.colorCommand.execute();
-    layout.undoCommands.push(layout.colorCommand);
+    layout.undoCommand = layout.colorCommand;
+    layout.redoCommand = layout.colorCommand;
     setComponents(layout.components.slice());
   };
 
   const handleLayoutColor = (colorIndex: number) => {
     layout.colorAllIndex = colorIndex;
     layout.colorAllCommand.execute();
-    layout.undoCommands.push(layout.colorAllCommand);
+    layout.undoCommand = layout.colorAllCommand;
+    layout.redoCommand = layout.colorAllCommand;
     setComponents(layout.components.slice());
   };
 
   const handleUndo = () => {
-    const command = layout.undoCommands.pop();
-    command?.undo();
+    layout.undoCommand.undo();
+    layout.redoCommand = layout.undoCommand;
+    setComponents(layout.components.slice());
+  };
+
+  const handleRedo = () => {
+    layout.redoCommand?.redo();
+    layout.undoCommand = layout.redoCommand;
     setComponents(layout.components.slice());
   };
 
@@ -75,6 +83,7 @@ const LayoutComponent = ({ layout }: LayoutComponentProps) => {
       {/* Select layout */}
       <Box sx={{ display: "flex", justifyContent: "space-around" }}>
         <Button onClick={handleUndo}>Undo</Button>
+        <Button onClick={handleRedo}>Redo</Button>
         <TextField
           select
           value={type}

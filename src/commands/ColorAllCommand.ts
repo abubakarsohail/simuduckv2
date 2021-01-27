@@ -15,6 +15,10 @@ class ColorAllCommand implements Command {
   undo = () => {
     this.layout.removeAllColor();
   };
+
+  redo = () => {
+    this.layout.colorAll();
+  };
 }
 
 export default ColorAllCommand;
